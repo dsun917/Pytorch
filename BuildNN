@@ -22,3 +22,51 @@ class Network(nn.Module):
 # Create the network and look at it's text representation
 model = Network()
 model
+
+
+
+# convenient way to build networks like this where a tensor is passed sequentially through operations
+# Hyperparameters for our network
+input_size = 784
+hidden_sizes = [128, 64]
+output_size = 10
+
+# Build a feed-forward network
+model = nn.Sequential(nn.Linear(input_size, hidden_sizes[0]),
+                      nn.ReLU(),
+                      nn.Linear(hidden_sizes[0], hidden_sizes[1]),
+                      nn.ReLU(),
+                      nn.Linear(hidden_sizes[1], output_size),
+                      nn.Softmax(dim=1))
+print(model)
+
+# Forward pass through the network and display output
+images, labels = next(iter(trainloader))
+images.resize_(images.shape[0], 1, 784)
+ps = model.forward(images[0,:])
+helper.view_classify(images[0].view(1, 28, 28), ps)
+
+
+
+
+# Loss and Autograd
+# Build a feed-forward network
+model = nn.Sequential(nn.Linear(784, 128),
+                      nn.ReLU(),
+                      nn.Linear(128, 64),
+                      nn.ReLU(),
+                      nn.Linear(64, 10),
+                      nn.LogSoftmax(dim=1))
+
+criterion = nn.NLLLoss()
+images, labels = next(iter(trainloader))
+images = images.view(images.shape[0], -1)
+
+logps = model(images)
+loss = criterion(logps, labels)
+
+print('Before backward pass: \n', model[0].weight.grad)
+
+loss.backward()
+
+print('After backward pass: \n', model[0].weight.grad)

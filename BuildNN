@@ -2,6 +2,7 @@
 # 784 inputs, 256 hidden units, 10 output units and a softmax output.
 
 import torch.nn.functional as F
+from torch import nn, optim
 
 class Network(nn.Module):
     def __init__(self):
@@ -70,3 +71,37 @@ print('Before backward pass: \n', model[0].weight.grad)
 loss.backward()
 
 print('After backward pass: \n', model[0].weight.grad)
+
+
+
+
+# Optimizer TO update the weights
+from torch import optim
+
+# Optimizers require the parameters to optimize and a learning rate
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+
+# Training
+epochs = 5
+for e in range(epochs):
+    running_loss = 0
+    for images, labels in trainloader:
+        # Flatten MNIST images into a 784 long vector
+        images = images.view(images.shape[0], -1)
+    
+        # TODO: Training pass
+        # Clear the gradients, do this because gradients are accumulated
+        optimizer.zero_grad()
+        
+        output = model.forward(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss += loss.item()
+    else:
+        print(f"Training loss: {running_loss/len(trainloader)}")
+
+
+

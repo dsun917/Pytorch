@@ -1,0 +1,4 @@
+# Softmax
+def softmax(x):
+  return torch.exp(x)/torch.sum(torch.exp(x), dim = 1).view(-1, 1)
+  
